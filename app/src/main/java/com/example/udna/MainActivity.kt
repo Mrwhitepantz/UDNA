@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         val buttonNotes = findViewById<Button>(R.id.notes)
         buttonNotes.setOnClickListener{
-            val intent = Intent(this,CharactersList::class.java)
+            val intent = Intent(this,austinActivity::class.java)
             startActivity(intent)
         }
 

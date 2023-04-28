@@ -1,7 +1,9 @@
 package com.example.udna
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 
 class CharactersList : AppCompatActivity() {
 
