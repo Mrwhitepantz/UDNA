@@ -12,11 +12,25 @@
         android:theme="@style/Theme.UDNA"
         tools:targetApi="31">
         <activity
+            android:name=".CharacterInfo"
+            android:exported="false"
+            android:parentActivityName=".CharactersList">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CharactersList" />
+        </activity>
+
+        <activity
             android:name=".austinActivity"
             android:exported="false" />
         <activity
-            android:name=".AustinActivity"
-            android:exported="false" />
+            android:name=".CharactersList"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
