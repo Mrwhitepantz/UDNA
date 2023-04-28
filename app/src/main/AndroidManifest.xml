@@ -46,9 +46,7 @@
         <activity
             android:name=".map_content"
             android:exported="false" />
-        <activity
-            android:name=".CharactersList"
-            android:exported="false" />
+
 
     </application>
 
