@@ -1,5 +1,6 @@
 package com.example.udna
 
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import java.io.File
+
 
 class CharactersList : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")

@@ -10,9 +10,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val file = File(getExternalFilesDir(null), "characters.json")
-        if(file.createNewFile()){
-            file.writeText("[\n]")
+
+
+        val buttonNotes = findViewById<Button>(R.id.notes)
+        buttonNotes.setOnClickListener{
+            val intent = Intent(this,austinActivity::class.java)
+            startActivity(intent)
+        }
+
+        val buttonMaps = findViewById<Button>(R.id.maps)
+        buttonMaps.setOnClickListener{
+            val intent = Intent(this,maps::class.java)
+            startActivity(intent)
+
         }
 
     }
