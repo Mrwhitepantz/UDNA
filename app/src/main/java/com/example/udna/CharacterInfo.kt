@@ -1,43 +1,71 @@
 package com.example.udna
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import java.io.File
 
 class CharacterInfo : AppCompatActivity() {
-    var charName = findViewById<EditText>(R.id.char_name)
-    var level = findViewById<EditText>(R.id.level_text)
-    var race = findViewById<EditText>(R.id.race_text)
-    var className = findViewById<EditText>(R.id.class_text)
-    var scoreStr = findViewById<EditText>(R.id.score_str)
-    var scoreDex = findViewById<EditText>(R.id.score_dex)
-    var scoreCon = findViewById<EditText>(R.id.score_con)
-    var scoreInt = findViewById<EditText>(R.id.score_int)
-    var scoreWis = findViewById<EditText>(R.id.score_wis)
-    var scoreCha = findViewById<EditText>(R.id.score_cha)
-    var bonusStr = findViewById<TextView>(R.id.bonus_str)
-    var bonusDex = findViewById<TextView>(R.id.bonus_dex)
-    var bonusCon = findViewById<TextView>(R.id.bonus_con)
-    var bonusInt = findViewById<TextView>(R.id.bonus_int)
-    var bonusWis = findViewById<TextView>(R.id.bonus_wis)
-    var bonusCha = findViewById<TextView>(R.id.bonus_cha)
+    lateinit var charName: EditText
+    lateinit var level: EditText
+    lateinit var race: EditText
+    lateinit var className: EditText
+    lateinit var scoreStr: EditText
+    lateinit var scoreDex: EditText
+    lateinit var scoreCon: EditText
+    lateinit var scoreInt: EditText
+    lateinit var scoreWis: EditText
+    lateinit var scoreCha: EditText
+    lateinit var bonusStr: TextView
+    lateinit var bonusDex: TextView
+    lateinit var bonusCon: TextView
+    lateinit var bonusInt: TextView
+    lateinit var bonusWis: TextView
+    lateinit var bonusCha: TextView
+    var listViewPosition = -1
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_character_info)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        charName = findViewById(R.id.char_name)
+        level = findViewById(R.id.level_text)
+        race = findViewById(R.id.race_text)
+        className = findViewById(R.id.class_text)
+        scoreStr = findViewById(R.id.score_str)
+        scoreDex = findViewById(R.id.score_dex)
+        scoreCon = findViewById(R.id.score_con)
+        scoreInt = findViewById(R.id.score_int)
+        scoreWis = findViewById(R.id.score_wis)
+        scoreCha = findViewById(R.id.score_cha)
+        bonusStr = findViewById(R.id.bonus_str)
+        bonusDex = findViewById(R.id.bonus_dex)
+        bonusCon = findViewById(R.id.bonus_con)
+        bonusInt = findViewById(R.id.bonus_int)
+        bonusWis = findViewById(R.id.bonus_wis)
+        bonusCha = findViewById(R.id.bonus_cha)
 
         val gson = Gson()
-        val charactersJson = File("res/values/characters.json").readText()
+        val charactersJson = File(this.getExternalFilesDir(null), "characters.json").readText()
         val charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
 
+        if(intent.hasExtra("newChar")){
+            findViewById<FloatingActionButton>(R.id.deleteCharButton).visibility = View.GONE
+        }
         val character = if (intent.hasExtra("name")){
             loadCharacter(charactersList, intent.getStringExtra("name"))
         } else{
             newCharacter()
         }
+
+        listViewPosition = intent.getIntExtra("position", -1)
 
         displayCharacterInfo(character)
     }
@@ -64,56 +92,86 @@ class CharacterInfo : AppCompatActivity() {
 
     private fun displayCharacterInfo(character: DndCharacter) {
         charName.setText(character.name)
-        level.setText(character.level)
+        level.setText(character.level.toString())
         race.setText(character.race)
         className.setText(character.className)
 
-        scoreStr.setText(character.abilities[0].score)
-        scoreDex.setText(character.abilities[1].score)
-        scoreCon.setText(character.abilities[2].score)
-        scoreInt.setText(character.abilities[3].score)
-        scoreWis.setText(character.abilities[4].score)
-        scoreCha.setText(character.abilities[5].score)
+        scoreStr.setText(character.abilities[0].score.toString())
+        scoreDex.setText(character.abilities[1].score.toString())
+        scoreCon.setText(character.abilities[2].score.toString())
+        scoreInt.setText(character.abilities[3].score.toString())
+        scoreWis.setText(character.abilities[4].score.toString())
+        scoreCha.setText(character.abilities[5].score.toString())
 
-        bonusStr.setText(character.abilities[0].modifier)
-        bonusDex.setText(character.abilities[1].modifier)
-        bonusCon.setText(character.abilities[2].modifier)
-        bonusInt.setText(character.abilities[3].modifier)
-        bonusWis.setText(character.abilities[4].modifier)
-        bonusCha.setText(character.abilities[5].modifier)
+        bonusStr.setText(character.abilities[0].modifier.toString())
+        bonusDex.setText(character.abilities[1].modifier.toString())
+        bonusCon.setText(character.abilities[2].modifier.toString())
+        bonusInt.setText(character.abilities[3].modifier.toString())
+        bonusWis.setText(character.abilities[4].modifier.toString())
+        bonusCha.setText(character.abilities[5].modifier.toString())
     }
 
-    private fun saveCharacterInfo(){
+    fun saveCharacterInfo(){
         val charName = charName.text.toString()
         val charLevel = level.text.toString().toInt()
         val charRace = race.text.toString()
         val charClass = className.text.toString()
-        val abilities = listOf<Ability>(Ability("Strength", scoreStr.text.toString().toInt(), bonusStr.text.toString().toInt()),
-            Ability("Dexterity", scoreDex.text.toString().toInt(), bonusDex.text.toString().toInt()),
-            Ability("Constitution",  scoreCon.text.toString().toInt(), bonusCon.text.toString().toInt()),
-            Ability("Intelligence",  scoreInt.text.toString().toInt(), bonusInt.text.toString().toInt()),
-            Ability("Wisdom",  scoreWis.text.toString().toInt(), bonusWis.text.toString().toInt()),
-            Ability("Charisma",  scoreCha.text.toString().toInt(), bonusCha.text.toString().toInt()))
+        val strength = scoreStr.text.toString().toInt()
+        val dexterity = scoreDex.text.toString().toInt()
+        val constitution = scoreCon.text.toString().toInt()
+        val intelligence = scoreInt.text.toString().toInt()
+        val wisdom = scoreWis.text.toString().toInt()
+        val charisma = scoreCha.text.toString().toInt()
+        val determineBonus = { score: Int -> ( score - 10 ) / 2 }
+
+        val abilities = listOf(Ability("Strength", strength, determineBonus(strength)),
+            Ability("Dexterity", dexterity,determineBonus(dexterity)),
+            Ability("Constitution", constitution, determineBonus(constitution) ),
+            Ability("Intelligence", intelligence, determineBonus(intelligence)),
+            Ability("Wisdom", wisdom, determineBonus(wisdom)),
+            Ability("Charisma", charisma, determineBonus(charisma))
+        )
 
         val gson = Gson()
-        val file = File("res/values/characters.json")
+        val file = File(this.getExternalFilesDir(null), "characters.json")
         val charactersJson = file.readText()
         var charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
-        var character = charactersList.find{it.name == charName}?: DndCharacter(charName,charLevel,charRace,charClass,abilities,
+        var character = charactersList.find{it.name == charName}
+        if(character == null) {
+            character = DndCharacter(charName,charLevel,charRace,charClass,abilities,
             emptyList())
-
-        character.level = charLevel
-        character.race = charRace
-        character.className = charClass
-        character.abilities = abilities
-        character.inventory = emptyList()
-
-        val newCharacterList = charactersList.toMutableList()
-        newCharacterList.add(character)
-        charactersList = newCharacterList.toTypedArray()
+            val newCharacterList = charactersList.toMutableList()
+            newCharacterList.add(character)
+            charactersList = newCharacterList.toTypedArray()
+        } else {
+            character.level = charLevel
+            character.race = charRace
+            character.className = charClass
+            character.abilities = abilities
+            character.inventory = emptyList()
+        }
 
         val saveCharacterListJson = gson.toJson(charactersList)
         file.writeText(saveCharacterListJson)
+
+        displayCharacterInfo(character)
+    }
+
+    fun deleteCharacter(){
+        val charName = charName.text.toString()
+
+        val gson = Gson()
+        val file = File(this.getExternalFilesDir(null), "characters.json")
+        val charactersJson = file.readText()
+        var charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
+        val character = charactersList.find{it.name == charName}
+        val newCharacterList = charactersList.toMutableList()
+        newCharacterList.remove(character)
+        charactersList = newCharacterList.toTypedArray()
+        val deleteCharacterFromListJson = gson.toJson(charactersList)
+        file.writeText(deleteCharacterFromListJson)
+
+        finish()
     }
 }
 
@@ -124,10 +182,14 @@ class DndCharacter(
     var className: String,
     var abilities: List<Ability>,
     var inventory: List<String>
-)
+){
+//    override fun toString(): String{
+//        return name
+//    }
+}
 
 class Ability(
     val name: String,
     val score: Int,
     val modifier: Int
-)
+){}
