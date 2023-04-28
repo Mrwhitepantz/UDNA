@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UDNA</string>
+    <string name="character_title"><u>Characters</u></string>
 </resources>
