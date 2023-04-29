@@ -1,6 +1,7 @@
 package com.example.udna
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import java.io.File
+import java.io.Serializable
 
 class CharacterInfo : AppCompatActivity() {
     lateinit var charName: EditText
@@ -27,6 +29,7 @@ class CharacterInfo : AppCompatActivity() {
     lateinit var bonusInt: TextView
     lateinit var bonusWis: TextView
     lateinit var bonusCha: TextView
+    lateinit var existingCharacter: DndCharacter
     var listViewPosition = -1
 
     @SuppressLint("MissingInflatedId")
@@ -52,26 +55,22 @@ class CharacterInfo : AppCompatActivity() {
         bonusWis = findViewById(R.id.bonus_wis)
         bonusCha = findViewById(R.id.bonus_cha)
 
-        val gson = Gson()
-        val charactersJson = File(this.getExternalFilesDir(null), "characters.json").readText()
-        val charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
-
-        if(intent.hasExtra("newChar")){
-            findViewById<FloatingActionButton>(R.id.deleteCharButton).visibility = View.GONE
-        }
-        val character = if (intent.hasExtra("name")){
-            loadCharacter(charactersList, intent.getStringExtra("name"))
+        val character = if (intent.hasExtra("character")){
+            intent.getSerializableExtra("character")
+            existingCharacter = intent.getSerializableExtra("character") as DndCharacter
         } else{
-            newCharacter()
+            findViewById<FloatingActionButton>(R.id.deleteCharButton).visibility = View.GONE
+            newCharacter(this)
         }
 
         listViewPosition = intent.getIntExtra("position", -1)
 
-        displayCharacterInfo(character)
+        displayCharacterInfo(character as DndCharacter)
     }
 
-    private fun newCharacter(): DndCharacter {
-        return DndCharacter(
+    private fun newCharacter(context: Context): DndCharacter {
+        val character = DndCharacter(
+            0,
             "default",
             1,
             "Human",
@@ -84,10 +83,8 @@ class CharacterInfo : AppCompatActivity() {
                 Ability("Charisma", 10, 0)),
             emptyList()
         )
-    }
-
-    private fun loadCharacter(charactersList: Array<DndCharacter>, name: String?): DndCharacter {
-        return charactersList.find {it.name == name}?: newCharacter()
+        character.id = DndCharacter.getNextID()
+        return character
     }
 
     private fun displayCharacterInfo(character: DndCharacter) {
@@ -103,12 +100,12 @@ class CharacterInfo : AppCompatActivity() {
         scoreWis.setText(character.abilities[4].score.toString())
         scoreCha.setText(character.abilities[5].score.toString())
 
-        bonusStr.setText(character.abilities[0].modifier.toString())
-        bonusDex.setText(character.abilities[1].modifier.toString())
-        bonusCon.setText(character.abilities[2].modifier.toString())
-        bonusInt.setText(character.abilities[3].modifier.toString())
-        bonusWis.setText(character.abilities[4].modifier.toString())
-        bonusCha.setText(character.abilities[5].modifier.toString())
+        bonusStr.text = character.abilities[0].modifier.toString()
+        bonusDex.text = character.abilities[1].modifier.toString()
+        bonusCon.text = character.abilities[2].modifier.toString()
+        bonusInt.text = character.abilities[3].modifier.toString()
+        bonusWis.text = character.abilities[4].modifier.toString()
+        bonusCha.text = character.abilities[5].modifier.toString()
     }
 
     fun saveCharacterInfo(){
@@ -133,59 +130,66 @@ class CharacterInfo : AppCompatActivity() {
         )
 
         val gson = Gson()
-        val file = File(this.getExternalFilesDir(null), "characters.json")
-        val charactersJson = file.readText()
-        var charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
-        var character = charactersList.find{it.name == charName}
+        val directory = File(this.getExternalFilesDir(null), "characters")
+        val characterFilesList = directory.listFiles()
+        var character = existingCharacter
+
         if(character == null) {
-            character = DndCharacter(charName,charLevel,charRace,charClass,abilities,
-            emptyList())
-            val newCharacterList = charactersList.toMutableList()
-            newCharacterList.add(character)
-            charactersList = newCharacterList.toTypedArray()
-        } else {
-            character.level = charLevel
-            character.race = charRace
-            character.className = charClass
-            character.abilities = abilities
-            character.inventory = emptyList()
+            character = newCharacter(this)
+        }
+        character.name = charName
+        character.level = charLevel
+        character.race = charRace
+        character.className = charClass
+        character.abilities = abilities
+        character.inventory = emptyList()
+
+        val characterToSave = characterFilesList.find { it.name == character.id.toString() }
+        if(characterToSave != null){
+            characterToSave.writeText(gson.toJson(character))
+        } else{
+            val newCharacterFile = File(directory, "${character.id.toString()}")
+            newCharacterFile.writeText(gson.toJson(character))
         }
 
-        val saveCharacterListJson = gson.toJson(charactersList)
-        file.writeText(saveCharacterListJson)
-
-        displayCharacterInfo(character)
+        finish()
     }
 
-    fun deleteCharacter(){
-        val charName = charName.text.toString()
+    fun deleteCharacter() {
+        val directory = File(this.getExternalFilesDir(null), "characters")
+        val characterFilesList = directory.listFiles()
 
-        val gson = Gson()
-        val file = File(this.getExternalFilesDir(null), "characters.json")
-        val charactersJson = file.readText()
-        var charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
-        val character = charactersList.find{it.name == charName}
-        val newCharacterList = charactersList.toMutableList()
-        newCharacterList.remove(character)
-        charactersList = newCharacterList.toTypedArray()
-        val deleteCharacterFromListJson = gson.toJson(charactersList)
-        file.writeText(deleteCharacterFromListJson)
+        characterFilesList.find { it.name == existingCharacter.id.toString() }?.delete()
 
         finish()
     }
 }
 
 class DndCharacter(
+    var id: Int,
     var name: String,
     var level: Int,
     var race: String,
     var className: String,
     var abilities: List<Ability>,
     var inventory: List<String>
-){
-//    override fun toString(): String{
-//        return name
-//    }
+) : Serializable {
+    companion object{
+        var lastID = 0
+        lateinit var charContext: Context
+        fun init(context: Context){
+            charContext = context
+            val directory = File(charContext.getExternalFilesDir(null), "characters")
+            val idFile = File(directory, "idfile")
+            if(!idFile.exists()){
+                idFile.writeText(0.toString())
+            }
+            lastID = idFile.readText().toInt()
+        }
+        fun getNextID():Int{
+            return lastID++
+        }
+    }
 }
 
 class Ability(

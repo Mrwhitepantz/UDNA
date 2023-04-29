@@ -28,13 +28,11 @@ class CharactersList : AppCompatActivity() {
 
         newChar.setOnClickListener(View.OnClickListener {
             val intent = Intent(this, CharacterInfo::class.java)
-            intent.putExtra("newChar",1)
             startActivity(intent)
         })
 
-        val gson = Gson()
-        val charactersJson = File(this.getExternalFilesDir(null), "characters.json").readText()
-        val charactersList = gson.fromJson(charactersJson, Array<DndCharacter>::class.java)
+        val directory = File(getExternalFilesDir(null), "characters")
+        val charactersList = buildCharacterList(directory)
         if(charactersList.isEmpty()){
             emptyList.text = "Nobody here but us chickens"
         }else{
@@ -46,11 +44,22 @@ class CharactersList : AppCompatActivity() {
         charListView.setOnItemClickListener { parent, view, position, id ->
             val name = findViewById<TextView>(R.id.list_item_name)
             val intent = Intent(this, CharacterInfo::class.java)
-            intent.putExtra("name", name.text)
+            intent.putExtra("character", charactersList.find{it.name == name.text})
             intent.putExtra("position", position)
             startActivity(intent)
         }
     }
+}
+
+fun buildCharacterList(directory: File) : Array<DndCharacter>{
+    val gson = Gson()
+    val charactersList = mutableListOf<DndCharacter>()
+    val characterFilesList = directory.listFiles()
+    for(file in characterFilesList){
+        val character = gson.fromJson(file.readText(), DndCharacter::class.java)
+        charactersList.add(character)
+    }
+    return charactersList.toTypedArray()
 }
 
 class CharacterAdapter(context: Context, resource: Int, objects: Array<DndCharacter>) : ArrayAdapter<DndCharacter>(context, resource, objects){
