@@ -13,7 +13,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        
+        val folder = File(getExternalFilesDir(null), "characters")
+        if(!folder.exists()) {
+            folder.mkdir()
+        }
 
         val buttonNotes = findViewById<Button>(R.id.notes)
         buttonNotes.setOnClickListener{
@@ -25,13 +29,12 @@ class MainActivity : AppCompatActivity() {
         buttonMaps.setOnClickListener{
             val intent = Intent(this,maps::class.java)
             startActivity(intent)
-
         }
 
-    }
-
-    fun openCharList(){
-        val intent = Intent(this, CharactersList::class.java)
-        startActivity(intent)
+        val buttonCharacters = findViewById<Button>(R.id.characters)
+        buttonCharacters.setOnClickListener{
+            val intent = Intent(this, CharactersList::class.java)
+            startActivity(intent)
+        }
     }
 }
