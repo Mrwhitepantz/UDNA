@@ -23,13 +23,13 @@
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:text="Maps"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/characters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notes" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/characters"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:onClick="openCharList"

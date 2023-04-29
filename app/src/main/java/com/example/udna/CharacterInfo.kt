@@ -1,7 +1,9 @@
 package com.example.udna
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -56,16 +58,18 @@ class CharacterInfo : AppCompatActivity() {
         bonusCha = findViewById(R.id.bonus_cha)
 
         val character = if (intent.hasExtra("character")){
-            intent.getSerializableExtra("character")
-            existingCharacter = intent.getSerializableExtra("character") as DndCharacter
+            intent.getSerializableExtra("character") as DndCharacter
         } else{
             findViewById<FloatingActionButton>(R.id.deleteCharButton).visibility = View.GONE
             newCharacter(this)
         }
+        if(intent.hasExtra("character")){
+            existingCharacter = character
+        }
 
         listViewPosition = intent.getIntExtra("position", -1)
 
-        displayCharacterInfo(character as DndCharacter)
+        displayCharacterInfo(character)
     }
 
     private fun newCharacter(context: Context): DndCharacter {
@@ -108,7 +112,7 @@ class CharacterInfo : AppCompatActivity() {
         bonusCha.text = character.abilities[5].modifier.toString()
     }
 
-    fun saveCharacterInfo(){
+    fun saveCharacterInfo(view: View){
         val charName = charName.text.toString()
         val charLevel = level.text.toString().toInt()
         val charRace = race.text.toString()
@@ -132,11 +136,13 @@ class CharacterInfo : AppCompatActivity() {
         val gson = Gson()
         val directory = File(this.getExternalFilesDir(null), "characters")
         val characterFilesList = directory.listFiles()
-        var character = existingCharacter
+        lateinit var character: DndCharacter
 
-        if(character == null) {
-            character = newCharacter(this)
-        }
+        character = if(!::existingCharacter.isInitialized) {
+            newCharacter(this)
+            }else{
+                existingCharacter
+            }
         character.name = charName
         character.level = charLevel
         character.race = charRace
@@ -151,16 +157,21 @@ class CharacterInfo : AppCompatActivity() {
             val newCharacterFile = File(directory, "${character.id.toString()}")
             newCharacterFile.writeText(gson.toJson(character))
         }
-
+        val resultIntent = Intent()
+        setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 
-    fun deleteCharacter() {
+    fun deleteCharacter(view: View) {
         val directory = File(this.getExternalFilesDir(null), "characters")
         val characterFilesList = directory.listFiles()
 
         characterFilesList.find { it.name == existingCharacter.id.toString() }?.delete()
 
+        val resultIntent = Intent()
+        resultIntent.putExtra("position", listViewPosition)
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
         finish()
     }
 }
@@ -196,4 +207,4 @@ class Ability(
     val name: String,
     val score: Int,
     val modifier: Int
-){}
+) : Serializable
