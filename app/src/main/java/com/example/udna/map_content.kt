@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
@@ -20,16 +21,17 @@ class map_content : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     lateinit var mapName: EditText
     var playercount : Int = 0
-    private val mapArray = Array(9){IntArray(9)}
+    lateinit var mapArray : Array<IntArray>
     lateinit var existingMap: chosenMap
     var listViewPosition = -1
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map_content)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val togglemenu = findViewById<Button>(R.id.colorbutton)
         mapName = findViewById(R.id.map_name)
 
         val map = if (intent.hasExtra("map")){
@@ -45,17 +47,21 @@ class map_content : AppCompatActivity() {
         listViewPosition = intent.getIntExtra("position", -1)
 
         displayMapInfo(map)
-
-    }
-    fun colorpickerButton (view:View){
-        val calendar = findViewById<ListView>(R.id.color_Picker)
-        if(calendar.visibility == View.VISIBLE){
-            calendar.visibility = View.GONE
-        } else {
-            calendar.visibility = View.VISIBLE
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        if (::existingMap.isInitialized ){
+             gridmanager.myArray = existingMap.mapgrid
         }
 
     }
+//    fun colorpickerButton (view:View){
+//        val calendar = findViewById<ListView>(R.id.color_Picker)
+//        if(calendar.visibility == View.VISIBLE){
+//            calendar.visibility = View.GONE
+//        } else {
+//            calendar.visibility = View.VISIBLE
+//        }
+//
+//    }
 
     private fun newMap(context: Context): chosenMap {
         val map = chosenMap(
@@ -84,7 +90,8 @@ class map_content : AppCompatActivity() {
         }
         map.name = mapName
         map.playercount = playercount
-        map.mapgrid = mapArray
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        map.mapgrid = gridmanager.myArray
 
 
         val mapToSave = mapFilesList?.find { it.name == map.id.toString() }
@@ -94,6 +101,8 @@ class map_content : AppCompatActivity() {
             val newMapFile = File(directory, map.id.toString())
             newMapFile.writeText(gson.toJson(map))
         }
+        File(this.getExternalFilesDir(null),"map_idfile").writeText(map.id.toString())
+
         val resultIntent = Intent()
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
@@ -109,7 +118,56 @@ class map_content : AppCompatActivity() {
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
+
+
+    fun fetchInfo(view: View){
+        val map_name = findViewById<TextView>(R.id.map_name)
+    }
+
+    fun buttonGray(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 0
+    }
+    fun buttonGreen(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 1
+    }
+    fun buttonBrown(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 2
+    }
+    fun buttonWhite(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 3
+    }
+    fun buttonBlack(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 4
+    }
+    fun buttonRed(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 5
+    }
+    fun buttonBlue(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 6
+    }
+    fun buttonPurple(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 7
+    }
+    fun buttonPink(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 8
+    }
+    fun buttonOrange(view:View){
+        val gridmanager = findViewById<QuarteredView2>(R.id.quarteredView2)
+        gridmanager.currentcolor = 9
+    }
 }
+
+
+
 class chosenMap(
     var id: Int,
     var name: String,
