@@ -33,9 +33,9 @@ class maps : AppCompatActivity() {
         adapter = MapAdapter(this, android.R.layout.simple_list_item_1, mapsList)
         mapListView.adapter = adapter
         mapListView.setOnItemClickListener { parent, view, position, id ->
-            val name = findViewById<TextView>(R.id.list_item_name)
-            val intent = Intent(this, CharacterInfo::class.java)
-            intent.putExtra("map", mapsList.find { it.name == name.text })
+            val item = adapter.getView(position,null,parent)
+            val intent = Intent(this, map_content::class.java)
+            intent.putExtra("map", mapsList.find { it.id == item.tag })
             intent.putExtra("position", position)
             startActivityForResult(intent, RESULT_OK)
 
@@ -45,7 +45,9 @@ class maps : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        val mapsList = redrawList(this)
         adapter.clear()
+        adapter.addAll(mapsList)
         adapter.notifyDataSetChanged()
     }
 
@@ -81,7 +83,9 @@ class maps : AppCompatActivity() {
 
             nameText?.text = currentItem?.name
             playerText?.text =  "${currentItem?.playercount} Players"
-
+            if (currentItem != null){
+                view?.tag = currentItem.id
+            }
             return view!!
         }
     }
