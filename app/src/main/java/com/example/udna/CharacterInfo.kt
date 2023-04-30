@@ -161,6 +161,8 @@ class CharacterInfo : AppCompatActivity() {
             val newCharacterFile = File(directory, character.id.toString())
             newCharacterFile.writeText(gson.toJson(character))
         }
+        File(this.getExternalFilesDir(null),"character_ids").writeText(character.id.toString())
+
         val resultIntent = Intent()
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
@@ -194,7 +196,7 @@ class DndCharacter(
         fun init(context: Context){
             charContext = context
             val directory = File(charContext.getExternalFilesDir(null), "characters")
-            val idFile = File(directory, "idfile")
+            val idFile = File(directory, "character_ids")
             if(!idFile.exists()){
                 idFile.writeText(0.toString())
             }

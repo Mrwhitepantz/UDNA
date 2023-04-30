@@ -16,6 +16,7 @@ import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import java.io.File
+import kotlin.math.log
 
 
 class CharactersList : AppCompatActivity() {
@@ -41,9 +42,9 @@ class CharactersList : AppCompatActivity() {
         adapter = CharacterAdapter(this, android.R.layout.simple_list_item_1, charactersList)
         charListView.adapter = adapter
         charListView.setOnItemClickListener { parent, view, position, id ->
-            val name = findViewById<TextView>(R.id.list_item_name)
+            val item = adapter.getView(position,null,parent)
             val intent = Intent(this, CharacterInfo::class.java)
-            intent.putExtra("character", charactersList.find{it.name == name.text})
+            intent.putExtra("character", charactersList.find{it.id == item.tag})
             intent.putExtra("position", position)
             startActivityForResult(intent, RESULT_OK)
         }
@@ -107,6 +108,10 @@ class CharacterAdapter(context: Context, resource: Int, objects:MutableList<DndC
         intText?.text = currentItem?.abilities?.find { it.name == "Intelligence" }?.score.toString()
         wisText?.text = currentItem?.abilities?.find { it.name == "Wisdom" }?.score.toString()
         chaText?.text = currentItem?.abilities?.find { it.name == "Charisma" }?.score.toString()
+
+        if (currentItem != null) {
+            view?.tag = currentItem.id
+        }
 
         return view!!
     }
