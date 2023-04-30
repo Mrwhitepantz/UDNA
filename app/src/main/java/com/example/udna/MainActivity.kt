@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity() {
         if(!folder.exists()) {
             folder.mkdir()
         }
+        val mapsfolder = File(getExternalFilesDir(null), "maps")
+        if(!mapsfolder.exists()) {
+            mapsfolder.mkdir()
+        }
 
         val buttonNotes = findViewById<Button>(R.id.notes)
         buttonNotes.setOnClickListener{

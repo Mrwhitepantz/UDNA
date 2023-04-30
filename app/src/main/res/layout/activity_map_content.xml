@@ -6,11 +6,67 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <com.example.udna.QuarteredView2
-        android:id="@+id/quarteredView2"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/saveMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/background"
+        android:clickable="true"
+        android:onClick="saveMapInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_save" />
+
+    <EditText
+        android:id="@+id/map_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="map name"
+        android:textColor="@color/material_dynamic_neutral70"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.udna.QuarteredView2
+        android:id="@+id/quarteredView2"
+        android:layout_width="463dp"
+        android:layout_height="430dp"
+        android:layout_marginTop="160dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deletemapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:clickable="true"
+        android:onClick="deleteMap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveMapButton"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    <ListView
+        android:id="@+id/color_Picker"
+        android:layout_width="415dp"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/colorbutton"
+        android:layout_width="96dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginBottom="4dp"
+        android:onClick="colorpickerButton"
+        android:text="Colors"
+        app:layout_constraintBottom_toTopOf="@+id/quarteredView2"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

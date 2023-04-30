@@ -18,7 +18,7 @@
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="@+id/list_item_level"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/list_item_race_class"
+        app:layout_constraintTop_toTopOf="@+id/list_item_player_count"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -30,10 +30,10 @@
         android:text="TextView"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_item_race_class" />
+        app:layout_constraintTop_toBottomOf="@+id/list_item_player_count" />
 
     <TextView
-        android:id="@+id/list_item_race_class"
+        android:id="@+id/list_item_player_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
