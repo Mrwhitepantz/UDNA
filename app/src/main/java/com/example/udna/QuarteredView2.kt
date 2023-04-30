@@ -2,19 +2,33 @@ package com.example.udna
 
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
-import android.view.View
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.view.GestureDetectorCompat
-import kotlin.math.min
+
 
 class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, attrs),GestureDetector.OnGestureListener {
 
     private var gridPaint = Paint().apply { color = Color.BLACK;style = Paint.Style.STROKE; strokeWidth = 2.0f }
-    private var numberPaint = Paint().apply { ;color = Color.BLACK ;style = Paint.Style.FILL_AND_STROKE
+    private var numberPaint = Paint().apply { ;color = Color.WHITE ;style = Paint.Style.FILL_AND_STROKE
         ;textAlign = Paint.Align.CENTER }
+    var backgroundPaint = Paint().apply {color = Color.DKGRAY; style = Paint.Style.FILL}
+
+    private var default = Paint().apply{color=Color.DKGRAY; style = Paint.Style.FILL}
+    private var grass = Paint().apply{color=(Color.parseColor("#A3E2AC")); style = Paint.Style.FILL}
+    private var dirt = Paint().apply{color=(Color.parseColor("#E2C1A3")) ; style = Paint.Style.FILL}
+
+    //LEGEND:
+    // 0 = dkgray,nothing
+    // 1 = green, grass
+
+
 
     private var squareSize = 0.0f
     private var offsetx = 0.0f
@@ -37,26 +51,54 @@ class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
         canvas?.apply {
-            drawRect(offsetx, offsety, offsetx + squareSize * 9.0f, offsety + squareSize * 9.0f, gridPaint)
-            for (i in 0..8) {
-                drawLine(offsetx, offsety + i * squareSize, offsetx + squareSize * 9.0f,
-                    offsety + i * squareSize, gridPaint)
-                drawLine(offsetx + i * squareSize, offsety, offsetx + i * squareSize,
-                    offsety + squareSize * 9.0f, gridPaint)
+            drawRect(
+                offsetx,
+                offsety,
+                offsetx + squareSize * 8.0f,
+                offsety + squareSize * 8.0f,
+                backgroundPaint
+            )
+            drawRect(
+                offsetx,
+                offsety,
+                offsetx + squareSize * 8.0f,
+                offsety + squareSize * 8.0f,
+                gridPaint
+            )
+            for (i in 0..7) {
+                drawLine(
+                    offsetx, offsety + i * squareSize, offsetx + squareSize * 8.0f,
+                    offsety + i * squareSize, gridPaint
+                )
+                drawLine(
+                    offsetx + i * squareSize, offsety, offsetx + i * squareSize,
+                    offsety + squareSize * 8.0f, gridPaint
+                )
             }
 
-            for (i in 0..8) {
-                for (j in 0..8) {
-                    val bounds = Rect()
-                    numberPaint.getTextBounds("0", 0, 1, bounds)
-                    val fontSize = (squareSize/9.0f)*3.5f
-                    numberPaint.textSize = fontSize * resources.displayMetrics.density
-                    drawText(myArray[j][i].toString(), offsetx + (i + 0.5f) * squareSize,
-                        offsety + (j + 0.5f) * squareSize + bounds.height() / 2.0f,
-                        numberPaint
-                    )
+            for (i in 0..7) {
+                for (j in 0..7) {
+                    when(myArray[i][j]){
+                        3 ->{
+                            drawRect(
+                                offsetx + (j) * squareSize, offsety + (i) * squareSize, offsetx + (j+1) * squareSize,
+                                offsety + (i+1) * squareSize, grass
+                            )
+                        }
+                        1 ->{
+                            drawCircle(
+                                offsetx + (j + 0.5f) * squareSize, offsety + (i + 0.5f) * squareSize,
+                                squareSize / 2.5f, grass
+                            )
+                        }
+                        2 ->{
+                            drawCircle(
+                                offsetx + (j + 0.5f) * squareSize, offsety + (i + 0.5f) * squareSize,
+                                squareSize / 2.5f, dirt
+                            )
+                        }
+                    }
                 }
             }
         }
