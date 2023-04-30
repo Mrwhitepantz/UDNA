@@ -15,10 +15,6 @@ class maps : AppCompatActivity() {
             val intent = Intent(this,map_content::class.java)
             startActivity(intent)
         }
-        val buttonback = findViewById<Button>(R.id.back)
-        buttonback.setOnClickListener{
-            val intent = Intent(this,MainActivity::class.java)
-            startActivity(intent)
-        }
+
     }
 }
