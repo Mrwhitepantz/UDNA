@@ -31,6 +31,7 @@ class CharacterInfo : AppCompatActivity() {
     lateinit var bonusInt: TextView
     lateinit var bonusWis: TextView
     lateinit var bonusCha: TextView
+    lateinit var inventory: EditText
     lateinit var existingCharacter: DndCharacter
     var listViewPosition = -1
 
@@ -56,6 +57,7 @@ class CharacterInfo : AppCompatActivity() {
         bonusInt = findViewById(R.id.bonus_int)
         bonusWis = findViewById(R.id.bonus_wis)
         bonusCha = findViewById(R.id.bonus_cha)
+        inventory = findViewById(R.id.inventory_text)
 
         val character = if (intent.hasExtra("character")){
             intent.getSerializableExtra("character") as DndCharacter
@@ -85,7 +87,7 @@ class CharacterInfo : AppCompatActivity() {
                 Ability("Intelligence", 10, 0),
                 Ability("Wisdom", 10, 0),
                 Ability("Charisma", 10, 0)),
-            emptyList()
+            ""
         )
         character.id = DndCharacter.getNextID()
         return character
@@ -110,6 +112,8 @@ class CharacterInfo : AppCompatActivity() {
         bonusInt.text = character.abilities[3].modifier.toString()
         bonusWis.text = character.abilities[4].modifier.toString()
         bonusCha.text = character.abilities[5].modifier.toString()
+
+        inventory.setText(character.inventory)
     }
 
     fun saveCharacterInfo(view: View){
@@ -123,6 +127,7 @@ class CharacterInfo : AppCompatActivity() {
         val intelligence = scoreInt.text.toString().toInt()
         val wisdom = scoreWis.text.toString().toInt()
         val charisma = scoreCha.text.toString().toInt()
+        val charInventory = inventory.text.toString()
         val determineBonus = { score: Int -> ( score - 10 ) / 2 }
 
         val abilities = listOf(Ability("Strength", strength, determineBonus(strength)),
@@ -136,9 +141,8 @@ class CharacterInfo : AppCompatActivity() {
         val gson = Gson()
         val directory = File(this.getExternalFilesDir(null), "characters")
         val characterFilesList = directory.listFiles()
-        lateinit var character: DndCharacter
 
-        character = if(!::existingCharacter.isInitialized) {
+        var character: DndCharacter = if(!::existingCharacter.isInitialized) {
             newCharacter(this)
             }else{
                 existingCharacter
@@ -148,13 +152,13 @@ class CharacterInfo : AppCompatActivity() {
         character.race = charRace
         character.className = charClass
         character.abilities = abilities
-        character.inventory = emptyList()
+        character.inventory = charInventory
 
         val characterToSave = characterFilesList.find { it.name == character.id.toString() }
         if(characterToSave != null){
             characterToSave.writeText(gson.toJson(character))
         } else{
-            val newCharacterFile = File(directory, "${character.id.toString()}")
+            val newCharacterFile = File(directory, character.id.toString())
             newCharacterFile.writeText(gson.toJson(character))
         }
         val resultIntent = Intent()
@@ -172,7 +176,6 @@ class CharacterInfo : AppCompatActivity() {
         resultIntent.putExtra("position", listViewPosition)
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
-        finish()
     }
 }
 
@@ -183,7 +186,7 @@ class DndCharacter(
     var race: String,
     var className: String,
     var abilities: List<Ability>,
-    var inventory: List<String>
+    var inventory: String
 ) : Serializable {
     companion object{
         var lastID = 0
