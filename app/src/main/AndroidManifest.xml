@@ -22,7 +22,13 @@
 
         <activity
             android:name=".austinActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
+        </activity>
         <activity
             android:name=".CharactersList"
             android:exported="false"

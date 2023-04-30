@@ -82,8 +82,8 @@ class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, at
                     when(myArray[i][j]){
                         3 ->{
                             drawRect(
-                                offsetx + (j) * squareSize, offsety + (i) * squareSize, offsetx + (j+1) * squareSize,
-                                offsety + (i+1) * squareSize, grass
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), grass
                             )
                         }
                         1 ->{
