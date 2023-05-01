@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity() {
         if(!folder.exists()) {
             folder.mkdir()
         }
+        val folderN = File(getExternalFilesDir(null), "notes")
+        if(!folderN.exists()) {
+            folderN.mkdir()
+        }
 
         val buttonNotes = findViewById<Button>(R.id.notes)
         buttonNotes.setOnClickListener{
