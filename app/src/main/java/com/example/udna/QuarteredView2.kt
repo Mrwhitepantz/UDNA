@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.GestureDetectorCompat
 
 
@@ -20,26 +21,37 @@ class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, at
         ;textAlign = Paint.Align.CENTER }
     var backgroundPaint = Paint().apply {color = Color.DKGRAY; style = Paint.Style.FILL}
 
-    private var default = Paint().apply{color=Color.DKGRAY; style = Paint.Style.FILL}
+    private var default = Paint().apply{color=(Color.parseColor("#424242")); style = Paint.Style.FILL}
     private var grass = Paint().apply{color=(Color.parseColor("#A3E2AC")); style = Paint.Style.FILL}
-    private var dirt = Paint().apply{color=(Color.parseColor("#E2C1A3")) ; style = Paint.Style.FILL}
+    private var dirt = Paint().apply{color=(Color.parseColor("#61300e")) ; style = Paint.Style.FILL}
+    private var white = Paint().apply{color=Color.WHITE; style = Paint.Style.FILL}
+    private var black = Paint().apply{color=Color.BLACK; style = Paint.Style.FILL}
+    private var enemyred = Paint().apply{color=(Color.parseColor("#940c15")) ; style = Paint.Style.FILL}
+    private var friendblue = Paint().apply{color=(Color.parseColor("#0e19e8")) ; style = Paint.Style.FILL}
+    private var playerpurple = Paint().apply{color=(Color.parseColor("#FF6200EE")) ; style = Paint.Style.FILL}
+    private var playerpink = Paint().apply{color=(Color.parseColor("#FFBB86FC")) ; style = Paint.Style.FILL}
+    private var playerorange = Paint().apply{color=(Color.parseColor("#e89c0e")) ; style = Paint.Style.FILL}
 
     //LEGEND:
-    // 0 = dkgray,nothing
+    // 0 = dkgray,
     // 1 = green, grass
-
-
+    // 2 = brown, dirt
+    // 3 = white
+    // 4 = black
+    // 5 = red
+    // 6 = blue
+    //players
+    // 7 = purple
+    // 8 = pink
+    // 9 = orange
 
     private var squareSize = 0.0f
     private var offsetx = 0.0f
     private var offsety = 0.0f
 
     private var mDetector = GestureDetectorCompat(this.context, this)
-    private val myArray = Array(9){IntArray(9)}
-
-
-
-
+    var myArray = Array(9){IntArray(9)}
+    var currentcolor = 0
 
     override fun onMeasure(width: Int, height: Int) {
         super.onMeasure(width, height)
@@ -80,22 +92,64 @@ class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, at
             for (i in 0..7) {
                 for (j in 0..7) {
                     when(myArray[i][j]){
-                        3 ->{
+                        0 ->{
                             drawRect(
-                                offsetx + (j) * squareSize, offsety + (i) * squareSize, offsetx + (j+1) * squareSize,
-                                offsety + (i+1) * squareSize, grass
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), default
                             )
                         }
                         1 ->{
-                            drawCircle(
-                                offsetx + (j + 0.5f) * squareSize, offsety + (i + 0.5f) * squareSize,
-                                squareSize / 2.5f, grass
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), grass
                             )
                         }
                         2 ->{
-                            drawCircle(
-                                offsetx + (j + 0.5f) * squareSize, offsety + (i + 0.5f) * squareSize,
-                                squareSize / 2.5f, dirt
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), dirt
+                            )
+                        }
+                        3 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), white
+                            )
+                        }
+                        4 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), black
+                            )
+                        }
+                        5 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), enemyred
+                            )
+                        }
+                        6 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), friendblue
+                            )
+                        }
+                        7 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), playerpurple
+                            )
+                        }
+                        8 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), playerpink
+                            )
+                        }
+                        9 ->{
+                            drawRect(
+                                offsetx + (j) * (squareSize+.5f), offsety + (i) * (squareSize+.5f), offsetx + (j+1) * (squareSize-.5f),
+                                offsety + (i+1) * (squareSize-.5f), playerorange
                             )
                         }
                     }
@@ -128,7 +182,7 @@ class QuarteredView2(context: Context?, attrs: AttributeSet?) : View(context, at
         val col = (x/squareSize).toInt()
 
 
-        myArray[row][col] = (myArray[row][col]+1)%10
+        myArray[row][col] = currentcolor
         invalidate()
         return true
     }
