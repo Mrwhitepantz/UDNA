@@ -172,7 +172,9 @@ class CharacterInfo : AppCompatActivity() {
         val directory = File(this.getExternalFilesDir(null), "characters")
         val characterFilesList = directory.listFiles()
 
-        characterFilesList.find { it.name == existingCharacter.id.toString() }?.delete()
+        if (characterFilesList != null) {
+            characterFilesList.find { it.name == existingCharacter.id.toString() }?.delete()
+        }
 
         val resultIntent = Intent()
         resultIntent.putExtra("position", listViewPosition)
@@ -192,6 +194,7 @@ class DndCharacter(
 ) : Serializable {
     companion object{
         var lastID = 0
+        @SuppressLint("StaticFieldLeak")
         lateinit var charContext: Context
         fun init(context: Context){
             charContext = context
