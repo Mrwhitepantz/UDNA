@@ -60,7 +60,8 @@ class CharactersList : AppCompatActivity() {
 
 }
 
-fun redrawList(context: Context,emptyList:TextView) : MutableList<DndCharacter>{
+@SuppressLint("SetTextI18n")
+fun redrawList(context: Context, emptyList:TextView) : MutableList<DndCharacter>{
     val directory = File(context.getExternalFilesDir(null), "characters")
     val charactersList = buildCharacterList(directory)
     if(charactersList.isEmpty()){
@@ -75,7 +76,7 @@ fun buildCharacterList(directory: File) : MutableList<DndCharacter>{
     val gson = Gson()
     val charactersList = mutableListOf<DndCharacter>()
     val characterFilesList = directory.listFiles()
-    for(file in characterFilesList){
+    for(file in characterFilesList!!){
         val character = gson.fromJson(file.readText(), DndCharacter::class.java)
         charactersList.add(character)
     }
@@ -83,6 +84,7 @@ fun buildCharacterList(directory: File) : MutableList<DndCharacter>{
 }
 
 class CharacterAdapter(context: Context, resource: Int, objects:MutableList<DndCharacter>) : ArrayAdapter<DndCharacter>(context, resource, objects){
+    @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var view = convertView
         if(view == null){
@@ -98,6 +100,7 @@ class CharacterAdapter(context: Context, resource: Int, objects:MutableList<DndC
         val intText = view?.findViewById<TextView>(R.id.list_item_int)
         val wisText = view?.findViewById<TextView>(R.id.list_item_wis)
         val chaText = view?.findViewById<TextView>(R.id.list_item_cha)
+        val idText = view?.findViewById<TextView>(R.id.list_item_id)
 
         nameText?.text = currentItem?.name
         levelText?.text = "Level ${currentItem?.level}"
@@ -108,6 +111,7 @@ class CharacterAdapter(context: Context, resource: Int, objects:MutableList<DndC
         intText?.text = currentItem?.abilities?.find { it.name == "Intelligence" }?.score.toString()
         wisText?.text = currentItem?.abilities?.find { it.name == "Wisdom" }?.score.toString()
         chaText?.text = currentItem?.abilities?.find { it.name == "Charisma" }?.score.toString()
+        idText?.text = "id: ${currentItem?.id.toString()}"
 
         if (currentItem != null) {
             view?.tag = currentItem.id
