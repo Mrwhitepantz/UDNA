@@ -203,7 +203,7 @@ class Spell : AppCompatActivity() {
             "Note",
             "Note information"
         )
-        character.id = DndCharacter.getNextID()
+        character.id = DndNote.getNextID()
         return character
     }
 
