@@ -19,6 +19,17 @@ class MainActivity : AppCompatActivity() {
             folder.mkdir()
         }
 
+        val folderN = File(getExternalFilesDir(null), "notes")
+        if(!folderN.exists()) {
+            folderN.mkdir()
+            }
+
+        val mapsfolder = File(getExternalFilesDir(null), "maps")
+        if(!mapsfolder.exists()) {
+            mapsfolder.mkdir()
+
+        }
+
         val buttonNotes = findViewById<Button>(R.id.notes)
         buttonNotes.setOnClickListener{
             val intent = Intent(this,austinActivity::class.java)

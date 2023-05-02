@@ -7,7 +7,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -93,7 +92,7 @@ class CharacterAdapter(context: Context, resource: Int, objects:MutableList<DndC
         val currentItem = getItem(position)
         val nameText = view?.findViewById<TextView>(R.id.list_item_name)
         val levelText = view?.findViewById<TextView>(R.id.list_item_level)
-        val raceText = view?.findViewById<TextView>(R.id.list_item_race_class)
+        val raceText = view?.findViewById<TextView>(R.id.list_item_player_count)
         val strText = view?.findViewById<TextView>(R.id.list_item_str)
         val dexText = view?.findViewById<TextView>(R.id.list_item_dex)
         val conText = view?.findViewById<TextView>(R.id.list_item_con)
